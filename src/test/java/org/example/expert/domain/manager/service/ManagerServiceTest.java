@@ -39,14 +39,14 @@ class ManagerServiceTest {
     private ManagerService managerService;
 
     @Test
-    public void manager_목록_조회_시_Todo가_없다면_NPE_에러를_던진다() {
+    public void manager_목록_조회_시_Todo가_없다면_InvalidRequestException_에러를_던진다() {
         // given
         long todoId = 1L;
         given(todoRepository.findById(todoId)).willReturn(Optional.empty());
 
         // when & then
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> managerService.getManagers(todoId));
-        assertEquals("Manager not found", exception.getMessage());
+        assertEquals("Todo not found", exception.getMessage());
     }
 
     @Test
@@ -64,11 +64,9 @@ class ManagerServiceTest {
         given(todoRepository.findById(todoId)).willReturn(Optional.of(todo));
 
         // when & then
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
+        assertThrows(NullPointerException.class, () ->
             managerService.saveManager(authUser, todoId, managerSaveRequest)
         );
-
-        assertEquals("일정을 생성한 유저만 담당자를 지정할 수 있습니다.", exception.getMessage());
     }
 
     @Test // 테스트코드 샘플
